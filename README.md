@@ -4,23 +4,129 @@ Aquí tienes el README completo para tu proyecto de autenticación con Spring Bo
 
 ## Estructura del Proyecto (SOLID)
 
+```
+src/main/java/
+└── com/velasquez/authentication/demo/
+├── config/
+│ ├── ApplicationConfig.java
+│ └── SecurityConfig.java
+├── controller/
+│ ├── AuthenticationController.java
+│ └── UserController.java
+├── dto/
+│ ├── AuthenticationRequest.java
+│ ├── AuthenticationResponse.java
+│ └── RegisterRequest.java
+├── entity/
+│ ├── Role.java
+│ └── Users.java
+├── repository/
+│ └── UserRepository.java
+├── security/
+│ ├── JwtAuthenticationFilter.java
+│ └── JwtService.java
+├── service/
+│ ├── AuthenticationService.java
+│ └── UserServices.java
+└── DemoApplication.java
+```
+**Leyenda:**
+- 📁 `config/`: Configuraciones de la aplicación
+- 📁 `controller/`: Controladores REST
+- 📁 `dto/`: Objetos de Transferencia de Datos
+- 📁 `entity/`: Entidades del dominio
+- 📁 `repository/`: Interfaces de acceso a datos
+- 📁 `security/`: Componentes de seguridad
+- 📁 `service/`: Lógica de negocio
+- 🚀 `DemoApplication.java`: Clase principal
+
+
+# Sistema de Autenticación JWT con Spring Boot
+
+## Configuración de la Aplicación
+
+### 1. Configuración de Base de Datos (MySQL)
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jwt_auth
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+**Variables:**
+- `url`: Conexión a la base de datos MySQL
+- `username/password`: Credenciales de acceso
+- `driver-class-name`: Controlador JDBC para MySQL
+
+### 2. Configuración JPA/Hibernate
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+```
+
+**Opciones clave:**
+- `ddl-auto: create-drop` → Crea y elimina tablas al iniciar/detener (solo desarrollo)
+- `show-sql: true` → Muestra SQL en consola
+- `format_sql: true` → Formatea el SQL para mejor legibilidad
+- `dialect` → Optimizado para MySQL 8+
+
+### 3. Configuración JWT
+```yaml
+jwt:
+  secret-key: c2d112bff0bb34f4be5d9b8553270e26f9c9e09a18c40e885a5d961259e45d53
+  expiration: 86400000 # 24 horas
+```
+
+**Seguridad:**
+- `secret-key`: Clave HMAC-SHA256 para firmar tokens
+- `expiration`: Tiempo de vida del token (ms)
+
+## Endpoints Principales
+
+| Método | Endpoint               | Descripción                      | Acceso       |
+|--------|------------------------|----------------------------------|--------------|
+| POST   | /api/v1/auth/register  | Registrar nuevo usuario          | Público      |
+| POST   | /api/v1/auth/login     | Autenticación (obtener JWT)      | Público      |
+| GET    | /api/v1/users          | Listar todos usuarios            | ROLE_ADMIN   |
+| GET    | /api/v1/users/{id}     | Obtener usuario por ID           | ROLE_USER/ADMIN |
+
+---
+## Configuración del proyecto
+
+
 ### 1. Entities
 
 #### `Users.java`
 ```java
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    
     // Implementación de UserDetails...
 }
 ```
@@ -130,6 +236,10 @@ public class AuthenticationController {
 
 #### `UserController.java`
 ```java
+/**
+ * Controlador para gestión de usuarios.
+ * Sigue el principio de Segregación de Interfaces (SOLID)
+ */
 @RestController
 @RequestMapping("/api/v1/users")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -153,7 +263,7 @@ public class UserController {
 
 ---
 
-### 5. Seguridad
+### 5. Seguridad (Config)
 
 #### `SecurityConfig.java`
 ```java
@@ -241,10 +351,20 @@ public class JwtAuthenticacionFilter extends OncePerRequestFilter {
 public class JwtService {
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    
-    public String generateToken(UserDetails userDetails) { ... }
-    public boolean isTokenValid(String token, UserDetails userDetails) { ... }
-    public String extractUsername(String token) { ... }
+
+    @Value("${jwt.expiration}")
+    private long jwtExpiration;
+
+    public String extractUserName(String token){...}
+    public <T> T extractClaim){...}
+    public List<String> extractRoles){...}
+    public String generateToken(UserDetails userDetails){...}
+    public String generateToken){...}
+    public boolean isTokenValid(String token){...}
+    private boolean isTokenExpired(String token){...}
+    private Date extractExpiration(String token){...}
+    private Claims extractAllClaims(String token){...}
+    private Key getSignInKey(){...}
 }
 ```
 
@@ -290,6 +410,10 @@ POST /api/v1/auth/register
     "role": "ROLE_ADMIN"
 }
 ```
+**Observaciones:**
+- Al enviar el JSON, escribir correctamente los atributos
+- Si no se envia el role, se registra como ROLE_USER
+
 
 4. **Ejemplo de autenticación**:
 ```json
@@ -299,155 +423,3 @@ POST /api/v1/auth/authenticate
     "password": "password123"
 }
 ```
-
-
-
-# Sistema de Autenticación JWT con Spring Boot
-
-## Configuración de la Aplicación
-
-### 1. Configuración de Base de Datos (MySQL)
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/jwt_auth
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-```
-
-**Variables:**
-- `url`: Conexión a la base de datos MySQL
-- `username/password`: Credenciales de acceso
-- `driver-class-name`: Controlador JDBC para MySQL
-
-### 2. Configuración JPA/Hibernate
-```yaml
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-```
-
-**Opciones clave:**
-- `ddl-auto: create-drop` → Crea y elimina tablas al iniciar/detener (solo desarrollo)
-- `show-sql: true` → Muestra SQL en consola
-- `format_sql: true` → Formatea el SQL para mejor legibilidad
-- `dialect` → Optimizado para MySQL 8+
-
-### 3. Configuración JWT
-```yaml
-jwt:
-  secret-key: c2d112bff0bb34f4be5d9b8553270e26f9c9e09a18c40e885a5d961259e45d53
-  expiration: 86400000 # 24 horas
-```
-
-**Seguridad:**
-- `secret-key`: Clave HMAC-SHA256 para firmar tokens
-- `expiration`: Tiempo de vida del token (ms)
-
-## Estructura del Proyecto
-
-```
-src/
-├── main/
-│   ├── java/
-│   │   ├── config/       # Configuraciones
-│   │   ├── controller/   # Controladores REST
-│   │   ├── entity/       # Entidades JPA
-│   │   ├── repository/   # Repositorios
-│   │   ├── security/     # Config seguridad
-│   │   └── service/      # Lógica de negocio
-│   └── resources/
-│       └── application.yml # Config principal
-```
-
-## Endpoints Principales
-
-| Método | Endpoint               | Descripción                      | Acceso       |
-|--------|------------------------|----------------------------------|--------------|
-| POST   | /api/v1/auth/register  | Registrar nuevo usuario          | Público      |
-| POST   | /api/v1/auth/login     | Autenticación (obtener JWT)      | Público      |
-| GET    | /api/v1/users          | Listar todos usuarios            | ROLE_ADMIN   |
-| GET    | /api/v1/users/{id}     | Obtener usuario por ID           | ROLE_USER/ADMIN |
-
-## Ejecución del Proyecto
-
-1. **Requisitos:**
-   - Java 17+
-   - MySQL 8+
-   - Maven
-
-2. **Pasos:**
-```bash
-# Clonar repositorio
-git clone [repo-url]
-
-# Configurar base de datos:
-CREATE DATABASE jwt_auth;
-
-# Ejecutar aplicación:
-mvn spring-boot:run
-```
-
-3. **Variables de entorno recomendadas:**
-```bash
-export DB_PASSWORD=tu_password_seguro
-export JWT_SECRET=otra_clave_secreta
-```
-
-## Seguridad Recomendada para Producción
-
-1. **Nunca usar credenciales por defecto** (root/root)
-2. **Rotar claves JWT** periódicamente
-3. **Usar HTTPS** para todas las comunicaciones
-4. **Limitar tiempo de vida** de los tokens (24h máximo)
-5. **Implementar refresh tokens** para renovación segura
-
-## Ejemplo de Uso
-
-**Registro:**
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/register \
--H "Content-Type: application/json" \
--d '{
-    "firstName": "Admin",
-    "lastName": "User",
-    "email": "admin@example.com",
-    "password": "SecurePass123!",
-    "role": "ROLE_ADMIN"
-}'
-```
-
-**Login:**
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/authenticate \
--H "Content-Type: application/json" \
--d '{
-    "email": "admin@example.com",
-    "password": "SecurePass123!"
-}'
-```
-
-**Respuesta JWT:**
-```json
-{
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-**Acceso autorizado:**
-```bash
-curl -X GET http://localhost:8080/api/v1/users \
--H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-```
-
-
-
-
-Este README proporciona una guía completa para entender y replicar tu sistema de autenticación, destacando cómo se aplican los principios SOLID en cada componente.
