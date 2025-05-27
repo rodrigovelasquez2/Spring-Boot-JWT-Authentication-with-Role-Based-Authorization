@@ -2,10 +2,10 @@ package com.velasquez.authentication.demo.service;
 
 import com.velasquez.authentication.demo.entity.Role;
 import com.velasquez.authentication.demo.entity.Users;
-import com.velasquez.authentication.demo.entity.dto.AuthenticationRequest;
-import com.velasquez.authentication.demo.entity.dto.AuthenticationResponse;
-import com.velasquez.authentication.demo.entity.dto.RegisterRequest;
-import com.velasquez.authentication.demo.jwt.JwtService;
+import com.velasquez.authentication.demo.dto.AuthenticationRequest;
+import com.velasquez.authentication.demo.dto.AuthenticationResponse;
+import com.velasquez.authentication.demo.dto.RegisterRequest;
+import com.velasquez.authentication.demo.security.JwtService;
 import com.velasquez.authentication.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

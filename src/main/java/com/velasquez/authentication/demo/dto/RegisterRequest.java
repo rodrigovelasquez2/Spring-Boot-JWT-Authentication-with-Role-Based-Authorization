@@ -1,4 +1,4 @@
-package com.velasquez.authentication.demo.entity.dto;
+package com.velasquez.authentication.demo.dto;
 
 import com.velasquez.authentication.demo.entity.Role;
 import lombok.AllArgsConstructor;

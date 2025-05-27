@@ -1,5 +1,6 @@
-package com.velasquez.authentication.demo.security;
+package com.velasquez.authentication.demo.config;
 
+import com.velasquez.authentication.demo.security.JwtAuthenticacionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

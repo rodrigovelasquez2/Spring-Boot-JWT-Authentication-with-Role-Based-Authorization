@@ -1,8 +1,8 @@
 package com.velasquez.authentication.demo.controller;
 
-import com.velasquez.authentication.demo.entity.dto.AuthenticationRequest;
-import com.velasquez.authentication.demo.entity.dto.AuthenticationResponse;
-import com.velasquez.authentication.demo.entity.dto.RegisterRequest;
+import com.velasquez.authentication.demo.dto.AuthenticationRequest;
+import com.velasquez.authentication.demo.dto.AuthenticationResponse;
+import com.velasquez.authentication.demo.dto.RegisterRequest;
 import com.velasquez.authentication.demo.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

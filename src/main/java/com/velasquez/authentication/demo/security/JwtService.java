@@ -1,4 +1,4 @@
-package com.velasquez.authentication.demo.jwt;
+package com.velasquez.authentication.demo.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
