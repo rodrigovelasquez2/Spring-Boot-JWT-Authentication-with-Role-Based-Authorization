@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jwt_auth
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+jwt:
+  secret-key: c2d112bff0bb34f4be5d9b8553270e26f9c9e09a18c40e885a5d961259e45d53
+  expiration: 86400000 # 24 horas en milisegundos
