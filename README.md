@@ -40,9 +40,62 @@ src/main/java/
 - 📁 `service/`: Lógica de negocio
 - 🚀 `DemoApplication.java`: Clase principal
 
+## Dependencias del Proyecto
 
-# Sistema de Autenticación JWT con Spring Boot
+### Dependencias Principales
 
+| Grupo ID                     | Artifact ID                   | Versión  | Descripción |
+|------------------------------|-------------------------------|----------|-------------|
+| `org.springframework.boot`   | `spring-boot-starter-data-jpa` | -        | Integración con JPA/Hibernate para acceso a datos |
+| `org.springframework.boot`   | `spring-boot-starter-security` | -        | Spring Security para autenticación y autorización |
+| `org.springframework.boot`   | `spring-boot-starter-web`      | -        | Construcción de aplicaciones web REST |
+
+### Dependencias de JWT (JSON Web Tokens)
+
+| Grupo ID       | Artifact ID    | Versión | Uso |
+|----------------|----------------|---------|-----|
+| `io.jsonwebtoken` | `jjwt-api`     | 0.11.5  | API para creación/validación de JWT |
+| `io.jsonwebtoken` | `jjwt-impl`    | 0.11.5  | Implementación runtime de JJWT |
+| `io.jsonwebtoken` | `jjwt-jackson` | 0.11.5  | Soporte para serialización Jackson |
+
+### Otras Dependencias
+
+```xml
+<!-- Base de datos MySQL -->
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- Lombok para reducción de código boilerplate -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+
+### Plugins usados
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <source>${java.version}</source>
+        <target>${java.version}</target>
+        <!-- Configuración especial para Lombok -->
+        <annotationProcessorPaths>
+            <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </path>
+        </annotationProcessorPaths>
+    </configuration>
+</plugin>
+```
 ## Configuración de la Aplicación
 
 ### 1. Configuración de Base de Datos (MySQL)
